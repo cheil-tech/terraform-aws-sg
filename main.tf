@@ -12,12 +12,12 @@ locals {
   }
 }
 
-data "aws_security_groups" "sg" {
-  filter {
-    name   = "vpc-id"
-    values = ["${var.vpc_id}"]
-  }
-}
+# data "aws_security_groups" "sg" {
+#   filter {
+#     name   = "vpc-id"
+#     values = ["${var.vpc_id}"]
+#   }
+# }
 
 resource "aws_security_group" this {
   for_each = var.sg_names
@@ -56,7 +56,7 @@ resource "aws_security_group_rule" "sg_rule_cidr" {
   from_port   = each.value.port.from
   to_port     = each.value.port.to
   protocol    = each.value.protocol
-  description = "${each.value.desc} ${each.key}"
+  description = "${each.value.desc}"
 }
 
 resource "aws_security_group_rule" "sg_rule_sg" {
@@ -69,7 +69,7 @@ resource "aws_security_group_rule" "sg_rule_sg" {
   from_port                = each.value.port.from
   to_port                  = each.value.port.to
   protocol                 = each.value.protocol
-  description              = "${each.value.desc} ${each.key}"
+  description              = "${each.value.desc}"
 }
 
 resource "aws_security_group_rule" "sg_rule_self" {
@@ -81,5 +81,5 @@ resource "aws_security_group_rule" "sg_rule_self" {
   from_port   = each.value.port.from
   to_port     = each.value.port.to
   protocol    = each.value.protocol
-  description = "${each.value.desc} ${each.key}"
+  description = "${each.value.desc}"
 }
