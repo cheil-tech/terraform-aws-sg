@@ -1,0 +1,132 @@
+---
+context:
+  env_name: "Example"
+  region: "ap-northeast-2"
+  region_name: "apne2"
+  resource_name: "security_group"
+  project_name: "TF-MODULE"
+
+vpc:
+  id: "vpc-08dde60c92cd8d3d3"
+
+port:
+  any: 0
+  ssh: 22
+  ssh_bastion: 2222 
+  http: 80
+  https: 443 
+  tomcat: 8080
+  mysql: 13306
+
+sgs:
+  bastion:
+    data:
+      create: true
+      id: null
+      info:
+        desc: "bastion security group"
+        revoke: true
+  alb-api:
+    data:
+      create: true
+      id: null
+      info:
+        desc: "alb security group"
+        revoke: true
+
+rule:
+  data:
+    type: "ingress"
+    port:
+      from: ssh_bastion
+      to: ssh_bastion
+    protocol: "tcp"
+    src_type: "cidr"
+  src:
+    - { src_val: ["203.244.218.40/32"], desc: "Cheil GW" }
+    - { src_val: ["1.2.3.4/32"], desc: "test" }
+  desc: "ingress SSH"
+
+
+rules:
+  bastion:
+    i-ssh-2222: 
+      data:
+        type: "ingress"
+        protocol: "tcp"
+        src_type: "cidr"
+      port:
+        from: ssh_bastion
+        to: ssh_bastion
+      src:
+        - { src_val: ["203.244.218.40/32"], desc: "Cheil GW" }
+        - { src_val: ["1.2.3.4/32"], desc: "test" }
+      desc: "ingress SSH"
+    i-self-any: 
+      data:
+        type: "ingress"
+        protocol: "tcp"
+        src_type: "self"
+      port:
+        from: ssh_bastion
+        to: ssh_bastion
+      src:
+         - { src_val: null, desc: "" }
+      desc: "ingress self"
+    e-any-any: 
+      data:
+        type: "egress"
+        protocol: "tcp"
+        src_type: "cidr"
+      port:
+        from: "any"
+        to: "any"
+      src:
+        - { src_val: ["0.0.0.0/0"], desc: "ALL" }
+      desc: "egress ANY"
+  alb-api:
+    i-http-80: 
+      data:
+        type: "ingress"
+        protocol: "tcp"
+        src_type: "cidr"
+      port:
+        from: http
+        to: http
+      src:
+        - { src_val: ["0.0.0.0/0"], desc: "ALL" }
+      desc: "ingres HTTP"
+    i-https-443: 
+      data:
+        type: "ingress"
+        protocol: "tcp"
+        src_type: "cidr"
+      port:
+        from: https
+        to: https
+      src:
+        - { src_val: ["0.0.0.0/0"], desc: "ALL" }
+      desc: "ingress HTTPS"
+    i-ssh-22: 
+      data:
+        type: "ingress"
+        protocol: "tcp"
+        src_type: "sg"
+      port:
+        from: ssh
+        to: ssh
+      src:
+        - { src_val: "sg-08b2120be115a5900", desc: "ssh" }
+      desc: "ingress HTTPS"
+    e-any-any: 
+      data:
+        type: "egress"
+        protocol: "tcp"
+        src_type: "cidr"
+      port:
+        from: "any"
+        to: "any"
+      src:
+        - { src_val: ["0.0.0.0/0"], desc: "ALL" }
+      desc: "egress ANY"
+
