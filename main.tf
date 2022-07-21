@@ -32,7 +32,6 @@ resource "aws_security_group" this {
 }
 
 resource "aws_security_group_rule" "sg" {
-  # for_each = toset(var.rules)
   count = length(var.rules_sg)
 
   security_group_id = local.sg_id

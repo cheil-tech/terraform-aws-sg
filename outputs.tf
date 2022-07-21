@@ -1,9 +1,11 @@
 output "info" {
-  value = data.aws_security_group.this
+  value = {
+    sg = data.aws_security_group.this
+  }
 
   description = <<EOT
-
-data.aws_security_group.this
-
+info = {
+  sg = data.aws_security_group.this
+}
 EOT
 }
